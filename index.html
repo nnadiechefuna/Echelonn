@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#2563EB">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Echelonn - Smart Expense Tracker</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ======================================== -->
+<!-- APP CONTAINER -->
+<!-- ======================================== -->
+<div id="app">
+
+    <!-- ===== HEADER ===== -->
+    <header id="app-header">
+        <div class="header-left">
+            <button id="menu-toggle" class="icon-btn" aria-label="Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h1 id="app-title">Echelonn</h1>
+        </div>
+        <div class="header-right">
+            <button id="notification-btn" class="icon-btn" aria-label="Notifications">
+                <i class="fas fa-bell"></i>
+                <span class="badge-dot" id="notification-dot"></span>
+            </button>
+            <button id="theme-toggle" class="icon-btn" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <div class="user-avatar" id="user-avatar">
+                <span>👤</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main id="main-content">
+
+        <!-- ====== DASHBOARD VIEW ====== -->
+        <section id="dashboard-view" class="view active">
+            
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <h2 id="greeting-text">Good morning, Alex 👋</h2>
+                <p id="greeting-sub">Here's your financial snapshot</p>
+            </div>
+
+            <!-- Balance Card -->
+            <div class="balance-card">
+                <div class="balance-header">
+                    <span class="balance-label">Total Balance</span>
+                    <button class="balance-toggle" id="balance-toggle">
+                        <i class="fas fa-eye" id="balance-eye"></i>
+                    </button>
+                </div>
+                <div class="balance-amount" id="total-balance">$2,847.50</div>
+                <div class="balance-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>12.5% from last month</span>
+                </div>
+                <div class="balance-details">
+                    <div class="balance-detail-item">
+                        <span class="detail-label">Available</span>
+                        <span class="detail-value" id="available-balance">$2,397.50</span>
+                    </div>
+                    <div class="balance-detail-divider"></div>
+                    <div class="balance-detail-item">
+                        <span class="detail-label">Savings</span>
+                        <span class="detail-value" id="savings-balance">$450.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button class="quick-action-btn" data-view="add">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Add Money</span>
+                </button>
+                <button class="quick-action-btn" id="scan-receipt-btn">
+                    <i class="fas fa-camera"></i>
+                    <span>Scan Receipt</span>
+                </button>
+                <button class="quick-action-btn" data-view="goals">
+                    <i class="fas fa-bullseye"></i>
+                    <span>Goals</span>
+                </button>
+                <button class="quick-action-btn" id="quick-add-btn">
+                    <i class="fas fa-bolt"></i>
+                    <span>Quick Add</span>
+                </button>
+            </div>
+
+            <!-- Weekly Spending Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Weekly Spending</h3>
+                    <div class="chart-period-toggle">
+                        <button class="period-btn active" data-period="weekly">Week</button>
+                        <button class="period-btn" data-period="monthly">Month</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="spending-chart" height="180"></canvas>
+                </div>
+                <div class="chart-footer">
+                    <span class="chart-label">Daily Average</span>
+                    <span class="chart-value" id="daily-average">$64.29</span>
+                    <span class="chart-change positive">▲ $8.50 from last week</span>
+                </div>
+            </div>
+
+            <!-- Spending Breakdown -->
+            <div class="breakdown-card">
+                <h3>Spending Breakdown</h3>
+                <div class="breakdown-bars" id="breakdown-bars">
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">
+                            <span class="dot" style="background: #10B981"></span>
+                            <span>Food</span>
+                            <span class="breakdown-percent">32%</span>
+                        </div>
+                        <div class="breakdown-track">
+                            <div class="breakdown-fill" style="width: 32%; background: #10B981"></div>
+                        </div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">
+                            <span class="dot" style="background: #3B82F6"></span>
+                            <span>Transport</span>
+                            <span class="breakdown-percent">15%</span>
+                        </div>
+                        <div class="breakdown-track">
+                            <div class="breakdown-fill" style="width: 15%; background: #3B82F6"></div>
+                        </div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">
+                            <span class="dot" style="background: #8B5CF6"></span>
+                            <span>Data</span>
+                            <span class="breakdown-percent">5%</span>
+                        </div>
+                        <div class="breakdown-track">
+                            <div class="breakdown-fill" style="width: 5%; background: #8B5CF6"></div>
+                        </div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">
+                            <span class="dot" style="background: #F59E0B"></span>
+                            <span>School</span>
+                            <span class="breakdown-percent">20%</span>
+                        </div>
+                        <div class="breakdown-track">
+                            <div class="breakdown-fill" style="width: 20%; background: #F59E0B"></div>
+                        </div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">
+                            <span class="dot" style="background: #EF4444"></span>
+                            <span>Entertainment</span>
+                            <span class="breakdown-percent">28%</span>
+                        </div>
+                        <div class="breakdown-track">
+                            <div class="breakdown-fill" style="width: 28%; background: #EF4444"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Insights -->
+            <div class="insights-section">
+                <h3>AI Insights <span class="insights-badge">✨</span></h3>
+                <div id="insights-container">
+                    <div class="insight-card positive">
+                        <i class="fas fa-arrow-trend-down"></i>
+                        <div>
+                            <h4>You're saving 15% more this month!</h4>
+                            <p>Food delivery dropped by 32%. Keep cooking at home! 🍳</p>
+                        </div>
+                    </div>
+                    <div class="insight-card warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div>
+                            <h4>Transport budget at 85%</h4>
+                            <p>$22.50 left this week. Consider walking or biking. 🚲</p>
+                        </div>
+                    </div>
+                    <div class="insight-card tip">
+                        <i class="fas fa-lightbulb"></i>
+                        <div>
+                            <h4>Smart Saving Tip</h4>
+                            <p>Save $5/day by switching to campus cafeteria instead of takeout.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="recent-section">
+                <div class="section-header">
+                    <h3>Recent Transactions</h3>
+                    <button class="see-all-btn" data-view="history">See All</button>
+                </div>
+                <div id="recent-transactions">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ====== ADD EXPENSE VIEW ====== -->
+        <section id="add-view" class="view">
+            <div class="add-container">
+                <div class="add-header">
+                    <h2>Add Expense</h2>
+                    <button class="close-add-btn" data-view="dashboard">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <!-- Amount Display -->
+                <div class="amount-display">
+                    <span class="currency">$</span>
+                    <span class="amount-input" id="expense-amount">0.00</span>
+                </div>
+
+                <!-- Category Grid -->
+                <div class="category-grid">
+                    <button class="category-btn" data-category="Food" data-icon="fa-utensils" data-color="#10B981">
+                        <i class="fas fa-utensils"></i>
+                        <span>Food</span>
+                    </button>
+                    <button class="category-btn" data-category="Transport" data-icon="fa-bus" data-color="#3B82F6">
+                        <i class="fas fa-bus"></i>
+                        <span>Transport</span>
+                    </button>
+                    <button class="category-btn" data-category="Data" data-icon="fa-wifi" data-color="#8B5CF6">
+                        <i class="fas fa-wifi"></i>
+                        <span>Data</span>
+                    </button>
+                    <button class="category-btn" data-category="School" data-icon="fa-graduation-cap" data-color="#F59E0B">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>School</span>
+                    </button>
+                    <button class="category-btn" data-category="Entertainment" data-icon="fa-gamepad" data-color="#EF4444">
+                        <i class="fas fa-gamepad"></i>
+                        <span>Entertainment</span>
+                    </button>
+                    <button class="category-btn" data-category="Rent" data-icon="fa-house" data-color="#EC4899">
+                        <i class="fas fa-house"></i>
+                        <span>Rent</span>
+                    </button>
+                    <button class="category-btn" data-category="Bills" data-icon="fa-file-invoice" data-color="#F97316">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>Bills</span>
+                    </button>
+                    <button class="category-btn" data-category="Other" data-icon="fa-ellipsis" data-color="#6B7280">
+                        <i class="fas fa-ellipsis"></i>
+                        <span>Other</span>
+                    </button>
+                </div>
+
+                <!-- Number Pad -->
+                <div class="numpad">
+                    <div class="numpad-row">
+                        <button class="numpad-btn" data-value="1">1</button>
+                        <button class="numpad-btn" data-value="2">2</button>
+                        <button class="numpad-btn" data-value="3">3</button>
+                    </div>
+                    <div class="numpad-row">
+                        <button class="numpad-btn" data-value="4">4</button>
+                        <button class="numpad-btn" data-value="5">5</button>
+                        <button class="numpad-btn" data-value="6">6</button>
+                    </div>
+                    <div class="numpad-row">
+                        <button class="numpad-btn" data-value="7">7</button>
+                        <button class="numpad-btn" data-value="8">8</button>
+                        <button class="numpad-btn" data-value="9">9</button>
+                    </div>
+                    <div class="numpad-row">
+                        <button class="numpad-btn" data-value="clear">
+                            <i class="fas fa-rotate-left"></i>
+                        </button>
+                        <button class="numpad-btn" data-value="0">0</button>
+                        <button class="numpad-btn" data-value=".">.</button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="add-actions">
+                    <button class="cancel-btn" data-view="dashboard">Cancel</button>
+                    <button class="save-btn" id="save-expense" disabled>
+                        <i class="fas fa-check"></i> Save
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====== HISTORY VIEW ====== -->
+        <section id="history-view" class="view">
+            <div class="history-header">
+                <h2>Transaction History</h2>
+                <div class="history-actions">
+                    <button id="export-csv" class="export-btn">
+                        <i class="fas fa-file-export"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="history-filters">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="Search transactions...">
+                </div>
+                <select id="category-filter">
+                    <option value="all">All Categories</option>
+                    <option value="Food">🍽️ Food</option>
+                    <option value="Transport">🚌 Transport</option>
+                    <option value="Data">📶 Data</option>
+                    <option value="School">🎓 School</option>
+                    <option value="Entertainment">🎮 Entertainment</option>
+                    <option value="Rent">🏠 Rent</option>
+                    <option value="Bills">📄 Bills</option>
+                    <option value="Other">⋯ Other</option>
+                </select>
+            </div>
+
+            <div id="history-list">
+                <!-- Dynamically populated -->
+            </div>
+
+            <div id="history-empty" class="empty-state">
+                <i class="fas fa-receipt"></i>
+                <p>No transactions yet</p>
+                <button class="add-first-btn" data-view="add">Add Your First Expense</button>
+            </div>
+        </section>
+
+        <!-- ====== GOALS VIEW ====== -->
+        <section id="goals-view" class="view">
+            <div class="goals-header">
+                <h2>🎯 Financial Goals</h2>
+                <button id="add-goal-btn" class="add-goal-btn">
+                    <i class="fas fa-plus"></i> New Goal
+                </button>
+            </div>
+
+            <div id="goals-container">
+                <div class="goal-card">
+                    <div class="goal-header">
+                        <h4>🏠 New Laptop</h4>
+                        <span class="goal-status">In Progress</span>
+                    </div>
+                    <div class="goal-progress">
+                        <span class="goal-amount">$450 of $1,200 saved</span>
+                        <div class="goal-track">
+                            <div class="goal-fill" style="width: 37.5%"></div>
+                        </div>
+                        <span class="goal-percent">37.5%</span>
+                    </div>
+                    <div class="goal-footer">
+                        <span class="goal-date">Target: Mar 2025</span>
+                        <button class="goal-add-btn">+ Add Money</button>
+                    </div>
+                </div>
+
+                <div class="goal-card">
+                    <div class="goal-header">
+                        <h4>✈️ Spring Break Trip</h4>
+                        <span class="goal-status">In Progress</span>
+                    </div>
+                    <div class="goal-progress">
+                        <span class="goal-amount">$200 of $800 saved</span>
+                        <div class="goal-track">
+                            <div class="goal-fill" style="width: 25%"></div>
+                        </div>
+                        <span class="goal-percent">25%</span>
+                    </div>
+                    <div class="goal-footer">
+                        <span class="goal-date">Target: Apr 2025</span>
+                        <button class="goal-add-btn">+ Add Money</button>
+                    </div>
+                </div>
+
+                <div class="goal-card completed">
+                    <div class="goal-header">
+                        <h4>📱 New Phone</h4>
+                        <span class="goal-status completed">Completed ✅</span>
+                    </div>
+                    <div class="goal-progress">
+                        <span class="goal-amount">$800 of $800 saved</span>
+                        <div class="goal-track">
+                            <div class="goal-fill" style="width: 100%"></div>
+                        </div>
+                        <span class="goal-percent">100%</span>
+                    </div>
+                    <div class="goal-footer">
+                        <span class="goal-date">Completed Dec 2024</span>
+                        <span class="goal-completed-badge">🎉 Achieved!</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====== SETTINGS VIEW ====== -->
+        <section id="settings-view" class="view">
+            <div class="settings-header">
+                <h2>Settings</h2>
+            </div>
+
+            <div class="settings-section">
+                <h3>Security</h3>
+                <div class="setting-item">
+                    <i class="fas fa-fingerprint"></i>
+                    <div>
+                        <h4>Biometric Authentication</h4>
+                        <p>Face ID / Touch ID</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="biometric-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <i class="fas fa-mobile-alt"></i>
+                    <div>
+                        <h4>Two-Factor Authentication</h4>
+                        <p>OTP via SMS</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="twofa-toggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <i class="fas fa-key"></i>
+                    <div>
+                        <h4>Change PIN</h4>
+                        <p>Update your security PIN</p>
+                    </div>
+                    <button class="setting-action-btn">Change</button>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Preferences</h3>
+                <div class="setting-item">
+                    <i class="fas fa-moon"></i>
+                    <div>
+                        <h4>Dark Mode</h4>
+                        <p>Switch theme</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="dark-mode-toggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <i class="fas fa-dollar-sign"></i>
+                    <div>
+                        <h4>Currency</h4>
+                        <p>USD (United States Dollar)</p>
+                    </div>
+                    <button class="setting-action-btn">Change</button>
+                </div>
+                <div class="setting-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <div>
+                        <h4>Budget Period</h4>
+                        <p>Monthly</p>
+                    </div>
+                    <button class="setting-action-btn">Change</button>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Data</h3>
+                <div class="setting-item">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <div>
+                        <h4>Sync Now</h4>
+                        <p>Last synced: 2 mins ago</p>
+                    </div>
+                    <button class="setting-action-btn primary">Sync</button>
+                </div>
+                <div class="setting-item">
+                    <i class="fas fa-file-export"></i>
+                    <div>
+                        <h4>Export Data</h4>
+                        <p>Download your financial data</p>
+                    </div>
+                    <button class="setting-action-btn">Export</button>
+                </div>
+                <div class="setting-item danger">
+                    <i class="fas fa-trash-alt"></i>
+                    <div>
+                        <h4>Delete Account</h4>
+                        <p>Permanently remove all data</p>
+                    </div>
+                    <button class="setting-action-btn danger">Delete</button>
+                </div>
+            </div>
+
+            <div class="settings-version">
+                Version 2.0.1
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ====== BOTTOM NAVIGATION ====== -->
+    <nav id="bottom-nav">
+        <button class="nav-item active" data-view="dashboard">
+            <i class="fas fa-chart-pie"></i>
+            <span>Home</span>
+        </button>
+        <button class="nav-item nav-add" data-view="add">
+            <i class="fas fa-plus-circle"></i>
+            <span>Add</span>
+        </button>
+        <button class="nav-item" data-view="history">
+            <i class="fas fa-list-ul"></i>
+            <span>History</span>
+        </button>
+        <button class="nav-item" data-view="goals">
+            <i class="fas fa-bullseye"></i>
+            <span>Goals</span>
+        </button>
+        <button class="nav-item" data-view="settings">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </button>
+    </nav>
+
+</div>
+
+<!-- ====== TOAST CONTAINER ====== -->
+<div id="toast-container"></div>
+
+<!-- ====== RECEIPT SCAN MODAL ====== -->
+<div id="scan-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Scan Receipt</h3>
+            <button class="modal-close" id="scan-modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="scan-viewport">
+            <i class="fas fa-camera scan-icon"></i>
+            <p>Position receipt in frame</p>
+            <div class="scan-guide"></div>
+        </div>
+        <div class="scan-actions">
+            <button class="scan-cancel">Cancel</button>
+            <button class="scan-capture" id="scan-capture-btn">
+                <i class="fas fa-camera"></i> Capture
+            </button>
+        </div>
+        <div class="scan-preview" id="scan-preview" style="display: none;">
+            <h4>Extracted Data</h4>
+            <div class="extracted-data">
+                <div class="extract-item">
+                    <span class="extract-label">Amount</span>
+                    <span class="extract-value" id="extract-amount">$45.67</span>
+                </div>
+                <div class="extract-item">
+                    <span class="extract-label">Merchant</span>
+                    <span class="extract-value" id="extract-merchant">Starbucks</span>
+                </div>
+                <div class="extract-item">
+                    <span class="extract-label">Date</span>
+                    <span class="extract-value" id="extract-date">Dec 15, 2024</span>
+                </div>
+            </div>
+            <div class="scan-actions">
+                <button class="scan-retake">Retake</button>
+                <button class="scan-save" id="scan-save-btn">Save & Categorize</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== QUICK ADD MODAL ====== -->
+<div id="quick-add-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content quick-add-modal">
+        <div class="modal-header">
+            <h3>Quick Add</h3>
+            <button class="modal-close" id="quick-add-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="quick-add-presets">
+            <button class="preset-btn" data-amount="5">$5</button>
+            <button class="preset-btn" data-amount="10">$10</button>
+            <button class="preset-btn" data-amount="20">$20</button>
+            <button class="preset-btn" data-amount="50">$50</button>
+            <button class="preset-btn" data-amount="100">$100</button>
+            <button class="preset-btn" data-amount="custom">Custom</button>
+        </div>
+        <div class="quick-add-category">
+            <select id="quick-add-category">
+                <option value="Food">🍽️ Food</option>
+                <option value="Transport">🚌 Transport</option>
+                <option value="Data">📶 Data</option>
+                <option value="School">🎓 School</option>
+                <option value="Entertainment">🎮 Entertainment</option>
+                <option value="Rent">🏠 Rent</option>
+                <option value="Bills">📄 Bills</option>
+                <option value="Other">⋯ Other</option>
+            </select>
+        </div>
+        <button class="quick-add-save" id="quick-add-save">Add Expense</button>
+    </div>
+</div>
+
+<!-- ====== MAIN APP SCRIPT ====== -->
+<script type="module" src="js/app.js"></script>
+
+</body>
+</html>
